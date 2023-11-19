@@ -4,7 +4,7 @@ setup(
     name='clean_folder',
     version='0.0.5',
     description='Program for sorting files by extension',
-    url='https://github.com/Georgij38/DZ_moduie6.git',
+    url='https://github.com/Georgij38/DZ_moduie7.git',
     author='Jegor Zaharov',
     license='MIT',
     packages=find_namespace_packages(),
