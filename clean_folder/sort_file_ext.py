@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 
 
 def transliteration(name):  # транс літерація
@@ -33,79 +34,52 @@ def del_empty_dirs(path):  # видаленя пустих папок
             if not os.listdir(path_dir):
                 os.rmdir(path_dir)
 
+def file_recording(root,folder_path,  filename, file_extension): #перенесиня файлу
+    first_name = filename + file_extension
+    new_file_name = transliteration(filename)  # транс літерація
+    new_file_name +=  file_extension
+    shutil.move(os.path.join(root, first_name), os.path.join(folder_path, new_file_name))
+
+def creating_folder(path, name_folder):
+    new_path_folder = os.path.join(path, name_folder)
+    if  not os.path.exists(new_path_folder):
+        os.mkdir(new_path_folder)
+    return new_path_folder
+
 
 def sorting_files(path):  # створиня папок
-    audio = path + r'\audio'
-    if not os.path.exists(audio):
-        os.mkdir(audio)
 
-    images = path + r'\images'
-    if not os.path.exists(images):
-        os.mkdir(images)
-
-    video = path + r'\video'
-    if not os.path.exists(video):
-        os.mkdir(video)
-
-    documents = path + r'\documents'
-    if not os.path.exists(documents):
-        os.mkdir(documents)
-
-    archives = path + r'\archives'
-    if not os.path.exists(archives):
-        os.mkdir(archives)
 
     for root, dirs, files in os.walk(path):  # отреманя списку файлів
-        if root == audio or root == images or root == video or root == documents or root == archives:  # пропуск створиних папок
-            continue
+        # if root  in (audio, images, video, documents, archives):  # пропуск створиних папок
+        #     continue
 
         for file_name in files:
             filename, file_extension = os.path.splitext(file_name)  # отриманя імя та розширеня файлу
             # сортуваня та зпис файлі
 
             # audio
-            if file_extension == '.mp3' \
-                    or file_extension == '.ogg' \
-                    or file_extension == '.wav' \
-                    or file_extension == '.amr':
-                filename = transliteration(filename)  # транс літерація
-                new_file_name = filename + file_extension
-                shutil.move(os.path.join(root, file_name), os.path.join(audio, new_file_name))
-
+            if file_extension in ('.mp3', '.ogg', '.wav' ,'.amr'):
+                folder_path = creating_folder(path, 'audio')
+                file_recording(root, folder_path, filename, file_extension)
 
             # images
-            elif file_extension == '.jpeg' \
-                    or file_extension == '.png' \
-                    or file_extension == '.jpg' \
-                    or file_extension == '.svg':
-                filename = transliteration(filename)  # транс літерація
-                new_file_name = filename + file_extension
-                shutil.move(os.path.join(root, file_name), os.path.join(images, new_file_name))
+            elif file_extension in ('.jpeg', '.png', '.jpg', '.svg'):
+                folder_path =  creating_folder(path, 'images')
+                file_recording(root, folder_path, filename, file_extension)
 
             # video
-            elif file_extension == '.avi' \
-                    or file_extension == '.mp4' \
-                    or file_extension == '.mov' \
-                    or file_extension == '.mkv':
-                filename = transliteration(filename)  # транс літерація
-                new_file_name = filename + file_extension
-                shutil.move(os.path.join(root, file_name), os.path.join(video, new_file_name))
+            elif file_extension in ('.avi', '.mp4', '.mov', '.mkv'):
+                folder_path = creating_folder(path, 'video')
+                file_recording(root,folder_path,  filename, file_extension)
 
             # documents
-            elif file_extension == '.dok' \
-                    or file_extension == '.docx' \
-                    or file_extension == '.txt' \
-                    or file_extension == '.pdf' \
-                    or file_extension == '.xlsx' \
-                    or file_extension == '.pptx':
-                filename = transliteration(filename)  # транс літерація
-                new_file_name = filename + file_extension
-                shutil.move(os.path.join(root, file_name), os.path.join(documents, new_file_name))
+            elif file_extension in ('.dok', '.docx', '.txt', '.pdf', '.xlsx' ,'.pptx'):
+                folder_path = creating_folder(path, 'documents')
+                file_recording(root, folder_path, filename, file_extension)
 
             # archives
-            elif file_extension == '.zip' \
-                    or file_extension == '.gz' \
-                    or file_extension == '.tar':
+            elif file_extension in ('.zip', '.gz', '.tar'):
                 filename = transliteration(filename)  # транс літерація
 
                 dir_file_name = os.path.join(archives, filename)
@@ -121,18 +95,29 @@ def sorting_files(path):  # створиня папок
 
 def start_sort_file_ext():
     path = input('enter the full path to the folder:  ')
-    while True:
-        if os.path.exists(path):
-            sorting_files(path)
-            break
-        else:
-            print('you entered an incorrect directory path')
-            path = input('enter the full path to the folder:  ')
+    if path == '0':
+            exit()
+    else:
+        this_is_folder(path)
+
+def  this_is_folder(path):
+    if os.path.exists(path):
+        sorting_files(path)
+    else:
+        print ('no such folder exists')
+        start_sort_file_ext()
 
 
 def main():
-    start_sort_file_ext()
+    if  len(sys.argv) == 2:
+        path = sys.argv[1]
+        this_is_folder(path)
+        print (path)
+    else:
+        start_sort_file_ext()
 
-
+root = 'D:\Python уроки\PYTEST'
 if __name__ == "__main__":
-    main()
+    sorting_files(root)
+
+
